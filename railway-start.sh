@@ -87,9 +87,6 @@ COOKIE_SECURE = $SECURE
 [attachment]
 PATH = /data/gogs/data/attachments
 
-[release.attachment]
-PATH = /data/gogs/data/release-attachments
-
 [lfs]
 OBJECTS_PATH = /data/gogs/data/lfs-objects
 OBJECTS_TEMP_PATH = /data/gogs/data/tmp/lfs-objects
