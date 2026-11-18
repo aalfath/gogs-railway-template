@@ -1,3 +1,5 @@
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/gogs-1?utm_medium=integration&utm_source=button&utm_campaign=gogs)
+
 # Gogs on Railway
 
 A one-click Railway template for [Gogs](https://gogs.io), the lightweight, self-hosted Git service: repositories, issues, pull requests, wikis, organisations and webhooks in one small Go binary.
@@ -9,7 +11,7 @@ A one-click Railway template for [Gogs](https://gogs.io), the lightweight, self-
 | **Gogs** | this repo's `Dockerfile`: the official image `gogs/gogs:0.14.4`, pinned by digest | volume at `/data` (Git repositories, config, SSH host keys, avatars, attachments, LFS objects) |
 | **Postgres** | Railway's PostgreSQL | volume at `/var/lib/postgresql/data` (users, issues, settings) |
 
-Gogs gets a public `*.up.railway.app` domain on port 3000 and a health check on `/healthcheck`, which also checks the database connection.
+Gogs gets a public `*.up.railway.app` domain on port 3000, a health check on `/healthcheck` (which also checks the database connection), and a Railway TCP proxy to port 22 for git over SSH.
 
 ## Variables
 
@@ -32,9 +34,9 @@ Optional settings:
 - `GOGS_DISABLE_REGISTRATION=false`: let anyone sign up. `GOGS_REQUIRE_SIGNIN_VIEW=true`: hide everything from visitors who aren't signed in.
 - Any other `app.ini` setting as `GOGS__<section>__<KEY>`, for example `GOGS__email__ENABLED=true`, `GOGS__email__HOST=smtp.YOUR-DOMAIN:587`. A dot in a section name is written `_0X2E_` (`GOGS__repository_0X2E_upload__FILE_MAX_SIZE=50`). See the [`app.ini` reference](https://github.com/gogs/gogs/blob/v0.14.4/conf/app.ini).
 
-## Git over SSH (optional)
+## Git over SSH
 
-HTTPS clone and push work out of the box. For SSH, open the Gogs service's **Settings → Networking**, add a **TCP Proxy** to port `22`, and redeploy. The start script picks up the proxy's host and port, enables SSH and shows `ssh://git@<proxy host>:<proxy port>/user/repo.git` clone URLs. Add your public key under **Your Settings → SSH Keys**.
+HTTPS clone and push work out of the box, and so does SSH: the template adds a Railway **TCP proxy** to the container's OpenSSH on port 22. The start script reads the proxy's host and port (`RAILWAY_TCP_PROXY_DOMAIN`, `RAILWAY_TCP_PROXY_PORT`) and shows clone URLs like `ssh://git@<host>.proxy.rlwy.net:<port>/owner/repo.git`. Add your public key under **Your Settings → SSH Keys**. OpenSSH accepts keys only (no passwords) and only for the `git` user. If you remove the TCP proxy, SSH is switched off in Gogs on the next deploy. To show a different SSH host or port, set `GOGS_SSH_DOMAIN` and `GOGS_SSH_PORT`.
 
 ## After deploy
 
